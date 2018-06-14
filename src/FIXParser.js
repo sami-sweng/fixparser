@@ -77,12 +77,13 @@ export default class FIXParser extends EventEmitter {
         this.heartBeatInterval = heartbeatIntervalMs;
         this.fixVersion = fixVersion;
         if (this.socket){
+            console.log("Destroy previous socket");
             this.socket.destroy();
         }
         this.socket = new Socket();
         this.socket.setEncoding('ascii');
 
-        console.log("FixParser construcor");
+        console.log("FixParser connecting...");
 
         this.socket
             .pipe(new FrameDecoder())
