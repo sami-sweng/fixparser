@@ -79,6 +79,8 @@ export default class FIXParser extends EventEmitter {
         this.socket = new Socket();
         this.socket.setEncoding('ascii');
 
+        console.log("FixParser construcor");
+
         this.socket
             .pipe(new FrameDecoder())
             .on('data', (data) => {
@@ -89,23 +91,32 @@ export default class FIXParser extends EventEmitter {
             });
 
         this.socket.on('close', () => {
+            console.log("FixParser socket close");
             this.emit('close');
             this.stopHeartbeat();
         });
 
         this.socket.on("error", (error) => {
+            console.log("FixParser socket error", error);
             this.emit('error', error);
             this.stopHeartbeat();
         });
 
         this.socket.on("timeout", () => {
+            console.log("FixParser socket timeout");
             this.emit('timeout');
             this.socket.end();
             this.stopHeartbeat();
         });
 
+        this.socket.on("end", () => {
+            console.log("FixParser socket end");
+            this.emit('end');
+            this.stopHeartbeat();
+        });
+
         this.socket.connect(this.port, this.host, () => {
-            console.log('Connected', this.socket.readyState);
+            console.log('FixParser socket connected', this.socket.readyState);
             if (this.socket.readyState === 'open') {
                 this.emit('open');
                 this.startHeartbeat();
